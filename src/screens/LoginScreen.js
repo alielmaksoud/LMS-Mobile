@@ -6,7 +6,7 @@ import Logo from '../components/Logo'
 import Header from '../components/Header'
 import TextInput from '../components/TextInput'
 import { theme } from '../core/theme'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react';
 import Button from '../components/Button'
 import { emailValidator } from '../helpers/emailValidator'
 import { passwordValidator } from '../helpers/passwordValidator'
@@ -22,19 +22,39 @@ import asyncstorage from '@react-native-community/async-storage'
 const LoginScreen = ({ navigation }) => {
 const [email, setEmail] = useState({ value: '', error: '' })
 const [password, setPassword] = useState({ value: '', error: '' })
+useEffect(() => {
+});
 
 const onLoginPressed = async => {
-const emailError = emailValidator(email.value)
-const passwordError = passwordValidator(password.value)
-if (emailError || passwordError) {
-setEmail({ ...email, error: emailError })
-setPassword({ ...password, error: passwordError })
-return
-}
-navigation.reset({
-index: 0,
-routes: [{ name: 'Dashboard' }],
-})
+    const emailError = emailValidator(email.value)
+    const passwordError = passwordValidator(password.value)
+    if (emailError || passwordError) {
+        setEmail({ ...email, error: emailError })
+        setPassword({ ...password, error: passwordError })
+        return
+    }else{
+        axios.post('http://localhost:8000/api/login',
+        {
+          email: email.value,
+          password:password.value
+        })
+        .then(res => {
+      
+            console.log( "On log in press >>>>",res.data);
+             navigation.reset({
+            index: 0,
+            routes: [{ name: 'Dashboard' }],
+            })
+             
+        })
+        .catch((error) => {
+        if(error){  
+          alert(error);
+          
+        }
+        })
+
+    }
 }
 
 return (
