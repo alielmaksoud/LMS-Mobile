@@ -8,6 +8,15 @@ import {
   View,
 } from "react-native";
 import { DataTable,} from 'react-native-paper'
+import { Dropdown } from 'react-native-material-dropdown';
+
+
+
+
+let data = [
+ ];
+
+
 
 
 const itemsPerPage = 2;
@@ -60,6 +69,15 @@ const Attendance = ({ navigation }) => {
 
   //we will add 2 drop down one for the class and second for the section
 
+  <Dropdown
+        label='class'
+        data={data}
+      />
+
+<Dropdown
+        label='section'
+        data={data}
+      />
 
     <DataTable>
       <DataTable.Pagination
