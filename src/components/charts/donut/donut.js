@@ -67,6 +67,7 @@ const MyPieChart = () => {
             },
           }}
           style={{
+            flex:1,
             marginVertical: 8,
             borderRadius: 16,
           }}
