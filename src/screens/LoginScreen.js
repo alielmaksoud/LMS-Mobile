@@ -33,7 +33,7 @@ const onLoginPressed = async => {
         setPassword({ ...password, error: passwordError })
         return
     }else{
-        axios.post('http://localhost:8000/api/login',
+        axios.post('http://192.168.0.109:8000/api/login',
         {
           email: email.value,
           password:password.value
@@ -55,6 +55,7 @@ const onLoginPressed = async => {
         })
 
     }
+
 }
 
 return (

@@ -16,6 +16,7 @@ import {
 
 const Stack = createStackNavigator()
 
+
 const App = () => {
   return (
     <Provider theme={theme}>
