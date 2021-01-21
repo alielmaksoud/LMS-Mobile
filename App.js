@@ -6,7 +6,6 @@ import { theme } from './src/core/theme'
 import {
   StartScreen,
   LoginScreen,
-  RegisterScreen,
   ForgotPasswordScreen,
   Dashboard,
   Attendance,
@@ -28,7 +27,6 @@ const App = () => {
         >
           <Stack.Screen name="StartScreen" component={StartScreen} />
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
-          <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
           <Stack.Screen name="Dashboard" component={Dashboard} />
           <Stack.Screen name="Attendance" component={Attendance} />
           <Stack.Screen name="Reports" component={Reports} />
