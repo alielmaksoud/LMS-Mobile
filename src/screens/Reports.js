@@ -2,55 +2,54 @@ import * as React from 'react';
 import Background from '../components/Background'
 import MyPieChart from '../components/charts/donut/donut'
 import MyBarChart from '../components/charts/bars/bars'
-import { createStackNavigator } from '@react-navigation/stack'
-
+import { getStatusBarHeight } from 'react-native-status-bar-height'
 import BackButton from '../components/BackButton'
-
-import { Text, View } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
-const HomeStack = createStackNavigator();
-const SettingsStack = createStackNavigator();
-
-function HomeStackScreen() {
+function HomeScreen() {
   return (
-    <HomeStack.Navigator>
-      <HomeStack.Screen
-        name="A"
-        component={MyPieChart}
-        options={{ tabBarLabel: 'Home!' }}
-      />
-    </HomeStack.Navigator>
+    <Background>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>Student Attendance</Text>
+      <MyPieChart/> 
+    </View>
+    </Background>
+    
   );
 }
 
-function SettingsStackScreen() {
+function SettingsScreen() {
   return (
-    <SettingsStack.Navigator>
-      <SettingsStack.Screen
-        name="B"
-        component={MyBarChart}
-        options={{ tabBarLabel: 'Settings!' }}
-      />
-    </SettingsStack.Navigator>
+    <Background>
+       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>Section Attendance</Text>
+      <MyBarChart/>
+      </View>
+    </Background>
+   
   );
 }
-
-
 
 const Tab = createMaterialTopTabNavigator();
 console.log(Tab)
 const Reports = ({ navigation }) => (
   
-    <Background>
+ 
+  
+    //<BackButton goBack={navigation.goBack} />
+    <SafeAreaView style={{
+    flex: 1,
+    top:getStatusBarHeight()
+    }}>
     <BackButton goBack={navigation.goBack} />
-      
-      <Tab.Navigator >
-        <Tab.Screen name="Home" component={HomeStackScreen}  />
-        <Tab.Screen name="Settings" component={SettingsStackScreen} />
+      <Tab.Navigator backBehavior='none'>
+        <Tab.Screen name="Home" component={HomeScreen}  />
+        <Tab.Screen name="Settings" component={SettingsScreen} />
       </Tab.Navigator>
+    </SafeAreaView>
 
-    </Background>
+   
   );
   export default Reports;
 
