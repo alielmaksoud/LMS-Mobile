@@ -55,6 +55,15 @@ const onLoginPressed = async => {
         })
 
     }
+
+    const storeData = async (value) => {
+      try {
+        const jsonValue = JSON.stringify(value)
+        await AsyncStorage.setItem('@storage_Key', jsonValue)
+      } catch (e) {
+        // saving error
+      }
+    }
 }
 
 return (
