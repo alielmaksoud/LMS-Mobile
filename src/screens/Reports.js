@@ -10,13 +10,17 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 
 function HomeScreen() {
   return (
-    <Background>
+    // <Background>
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Student Attendance</Text>
-      <Search/>
+      <Text style={{padding: 30, paddingBottom:20}}>Student Attendance</Text>
+      {/* <View     style={styles.head}> */}
       <MyPieChart/> 
+      {/* </View> */}
+      {/* <View  style={styles.foot}> */}
+      {/* </View> */}
+      
     </View>
-    </Background>
+    // </Background>
     
   );
 }
@@ -45,8 +49,8 @@ const Reports = ({ navigation }) => (
     top:getStatusBarHeight()
     }}>
       <Tab.Navigator backBehavior='none'>
-        <Tab.Screen name="Home" component={HomeScreen}  />
-        <Tab.Screen name="Settings" component={SettingsScreen} />
+        <Tab.Screen name="Student Attendance" component={HomeScreen}  />
+        <Tab.Screen name="Section Attendance" component={SettingsScreen} />
       </Tab.Navigator>
     </SafeAreaView>
 

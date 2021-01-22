@@ -11,7 +11,7 @@ import SearchableDropdown from 'react-native-searchable-dropdown';
 import axios from 'axios'
 
 
-export default function Search() {
+export default function Search(props) {
     const [Loading, setLoading] = useState(true);
     const [Student, setStudent] = useState([]);
 
@@ -25,20 +25,20 @@ export default function Search() {
           }};
             axios(config)
             .then(res => {
-                if (res.data != undefined) {
+                if (res.data !== undefined) {
                     let items=[]
                     res.data.forEach(
                       (item) => items.push({id: item.id, name: item.first_name + ' ' + item.last_name})
                     );
                     setStudent(items)
-                    console.log(res.data)
-                    console.log(items)
+                    
                     }
             }).catch(err => {
               console.log(err.request)
             })
            setLoading(false)
       },[]);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.container}>
@@ -46,21 +46,21 @@ export default function Search() {
         <SearchableDropdown
           onTextChange={(text) => console.log(text)}
           //On text change listner on the searchable input
-          onItemSelect={(item) => alert(JSON.stringify(item))}
+          onItemSelect={(item) => item ? props.setStudent(item.id) :null}
           //onItemSelect called after the selection from the dropdown
-          containerStyle={{ padding: 5 }}
+          containerStyle={{ padding: 0}}
           //suggestion container style
           textInputStyle={{
             //inserted text style
-            padding: 12,
+            padding: 10,
             borderWidth: 1,
             borderColor: '#ccc',
             backgroundColor: '#FAF7F6',
           }}
           itemStyle={{
             //single dropdown item style
-            padding: 10,
-            marginTop: 2,
+            padding: 5,
+            marginTop: 0,
             backgroundColor: '#FAF9F8',
             borderColor: '#bbb',
             borderWidth: 1,
@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
   container: {
     flex:1,
     padding: 4,
+    
   },
   
 });
