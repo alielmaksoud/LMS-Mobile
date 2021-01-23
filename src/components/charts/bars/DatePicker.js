@@ -1,10 +1,11 @@
  import React, {useState} from 'react';
  import { StyleSheet,  View } from 'react-native';
  import DatePicker from 'react-native-datepicker';
+import { onChange } from 'react-native-reanimated';
 
 const DatePicker1 = (props) => {
     const [date, setDate] = useState('2021-1-10');
-
+onChange((event,value)=> value ? props.setDate(value.toISOString().substring(0, 10)): date)
     return (
         <View style={styles.container}>
           
@@ -32,7 +33,7 @@ const DatePicker1 = (props) => {
             }}
             // onDateChange={(event,value)=> console.log(value.toISOString().substring(0, 10))}
 
-            onDateChange={(event,value)=> value ? props.setDate(value.toISOString().substring(0, 10)): date}
+            onDateChange={(event,value)=> value ? props.setDate(value.toISOString().substring(0, 10)): null}
           />
         </View>
     );

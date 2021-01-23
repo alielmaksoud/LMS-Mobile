@@ -15,12 +15,17 @@ const MyBarChart = () => {
   const [SelectedSection, setSelectedSection] = useState([]);
   const [sectionAttendance, setSectionAttendance] = useState([{name:'hello'}]);
   const [OneSectionAttendance, setOneSectionAttendance] = useState([]);
-
+  const [BarPresent, setBarPresent] = useState(5);
+  const [BarLate, setBarLate] = useState(3);
+  const [BarAbsent, setBarAbsent] = useState(1);
   
   const [datee, setdatee] = useState("2021-01-14");
-  console.log(datee)
-  const setDate = (date) => {
-    setdatee(date);
+  const setDate = (wrongdate) => {
+    let todate = wrongdate.split('-')
+    let day = parseInt(todate[2])+1
+    todate.splice(2, 1, day);
+  setdatee(todate.toString().replace(/,/g, '-'))
+
   };
 
   const HandleClass = (prop) => {
@@ -90,53 +95,44 @@ const MyBarChart = () => {
         });
     }
   }, [SelectedSection]);
-  
-
-  useEffect(() => {
-  //   var barPresent = [];
-  //   var barLate = [];
-  //   var barAbsent = [];
-  if (sectionAttendance !== undefined){
-    var dataa = sectionAttendance.filter(
-      (item) => item.date == datee
-    );
-    setOneSectionAttendance(dataa);
-  
-    console.log(dataa,'hello')
-  }
-  
+  const filterAttendance = () => {
+    if (sectionAttendance !== undefined){
+      var dataa = sectionAttendance.filter(
+        (item) => item.date == datee
+      );
+      setOneSectionAttendance(dataa);
     
-  //   // if (sectionAttendance.length > 0) {
-  //   //   sectionAttendance.forEach((item) => {
-  //   //     if (item.status === "present") {
-  //   //       barPresent.push(item);
-  //   //     } else if (item.status === "late") {
-  //   //       barLate.push(item);
-  //   //     } else if (item.status === "absent") {
-  //   //       barAbsent.push(item);
-  //   //     }
-  //   //   });
-  //   //   setBarPresent(barPresent.length);
-  //   //   setBarLate(barLate.length);
-  //   //   setBarAbsent(barAbsent.length);
-  //   //   setSectionMessage("Number of students: " + sectionAttendance.length);
-  //   //   setdisplay({
-  //   //     display: "none"
-  //   //   });
-  //   // } else {
-  //   //   setBarPresent(0);
-  //   //   setBarLate(0);
-  //   //   setBarAbsent(0);
-  //   //   setSectionMessage("Number of students: " + sectionAttendance.length);
-  //   //   setmessage("No Attendance for the specified date!");
-  //   //   setdisplay({
-  //   //     display: "inline-block",
-  //   //     textAlign: "center",
-  //   //     width: "100%",
-  //   //     color: "red",
-  //   //   });
-  //   // }
-  }, [sectionAttendance, datee]);
+    }
+  }
+  useEffect(() => {
+    var barPresent = [];
+    var barLate = [];
+    var barAbsent = [];
+ 
+ filterAttendance()
+    console.log(OneSectionAttendance,'OneSectionAttendance')
+    if (OneSectionAttendance.length > 0) {
+      OneSectionAttendance.forEach((item) => {
+        if (item.status === "present") {
+          barPresent.push(item);
+        } else if (item.status === "late") {
+          barLate.push(item);
+        } else if (item.status === "absent") {
+          barAbsent.push(item);
+        }
+      });
+      setBarPresent(barPresent.length);
+      setBarLate(barLate.length);
+      setBarAbsent(barAbsent.length);
+     
+    } else {
+      setBarPresent(0);
+      setBarLate(0);
+      setBarAbsent(0);
+    }
+  }, [ datee]);
+  console.log('great',datee)
+  console.log(BarPresent,'present')
 
   // console.log(Status);
     return (
@@ -167,21 +163,21 @@ const MyBarChart = () => {
         <View style={{flex:2, marginLeft:20}}>
         <BarChart
           data={{
-            labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+            labels: ['Present' + BarPresent , 'Absent' + BarAbsent, 'Late' + BarLate ],
             datasets: [
               {
-                data: [20, 45, 28, 80, 99, 43],
+                data: [BarPresent, BarAbsent, BarLate],
               },
             ],
           }}
           width={Dimensions.get('window').width-15}
           height={220}
-          yAxisLabel={'Rs'}
+          yAxisLabel={''}
           chartConfig={{
             backgroundColor: '#1cc910',
             backgroundGradientFrom: '#eff3ff',
             backgroundGradientTo: '#efefef',
-            decimalPlaces: 2,
+            decimalPlaces: 1,
             color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
             style: {
               borderRadius: 16,
