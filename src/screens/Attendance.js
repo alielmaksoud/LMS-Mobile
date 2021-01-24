@@ -18,6 +18,10 @@ const Attendance = ({ navigation }) => {
   const [SelectedClass, setSelectedClass] = useState([]);
   const [SelectedSection, setSelectedSection] = useState([]);
   const [SectionStudents, setSectionStudents] = useState([]);
+  const [message, setmessage] = useState();
+  const [Display, setDisplay] = useState({
+    display: "none",
+  });
 
   var radio_props = [
     { value: "Present" },
@@ -62,7 +66,11 @@ const Attendance = ({ navigation }) => {
   };
 
   const HandleSection = (prop) => {
+    setSectionStudents([]);
     setSelectedSection(prop);
+    setDisplay({
+      display: "none",
+    });
   };
 
   useEffect(() => {
@@ -99,21 +107,40 @@ const Attendance = ({ navigation }) => {
   }, [SelectedSection]);
 
   const SubmitSheet = (data) => {
-    axios
-      .post(`${API}/api/massattendance`, data)
-      .then((res) => {
-        console.log(res.data, "lala");
-      })
-      .catch((error) => {
-        console.log(error);
+    console.log(data.length, data);
+    if (data.length >= 1) {
+      axios
+        .post(`${API}/api/massattendance`, data)
+        .then((res) => {})
+        .catch((error) => {
+          console.log(error);
+        });
+      setStatus([]);
+      setmessage("Attendance has been logged!");
+      setDisplay({
+        textAlign: "center",
+        marginBottom: 20,
+        color: "green",
       });
-    setStatus([]);
+      testing(SelectedClass);
+      setSectionStudents([]);
+    } else {
+      setStatus([]);
+      setDisplay({
+        textAlign: "center",
+        marginBottom: 20,
+        color: "green",
+      });
+      testing(SelectedClass);
+      setSectionStudents([]);
+      setmessage("Cant log empty value");
+    }
   };
-
   return (
     <SafeAreaView>
       <View style={styles.screen}>
         <Text style={styles.title}>Attendance</Text>
+        <Text style={Display}>{message}</Text>
         <View style={styles.selectors}>
           <View>
             <Text>Select Class</Text>
@@ -138,7 +165,7 @@ const Attendance = ({ navigation }) => {
           <Text>Absent</Text>
         </View>
         <ScrollView style={styles.Container}>
-          {SectionStudents !== undefined && SectionStudents.lenght !== 1 ? (
+          {SectionStudents !== undefined && SectionStudents[0] !== undefined ? (
             SectionStudents.map((student) => {
               return (
                 <View key={student.id} style={styles.mainContainer}>
@@ -151,7 +178,7 @@ const Attendance = ({ navigation }) => {
                     <RadioForm
                       key={student.id}
                       radio_props={radio_props}
-                      initial={"Late"}
+                      initial={""}
                       formHorizontal={true}
                       buttonColor={"green"}
                       selectedButtonColor={"green"}
@@ -199,7 +226,12 @@ const Attendance = ({ navigation }) => {
           )}
         </ScrollView>
       </View>
-      <Button mode="outlined" onPress={() => SubmitSheet(Status)}>
+      <Button
+        mode="outlined"
+        onPress={() => {
+          SubmitSheet(Status);
+        }}
+      >
         Submit
       </Button>
       <Button

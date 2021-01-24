@@ -32,7 +32,7 @@ export default StyleSheet.create({
   title: {
     fontSize: 30,
     textAlign: "center",
-    margin: 20,
+    margin: 10,
   },
   statusTitles: {
     fontSize: 10,
