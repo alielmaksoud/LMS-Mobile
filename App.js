@@ -1,8 +1,9 @@
-import React from 'react'
-import { Provider } from 'react-native-paper'
-import { NavigationContainer } from '@react-navigation/native'
-import { createStackNavigator } from '@react-navigation/stack'
-import { theme } from './src/core/theme'
+import React from "react";
+import { Provider } from "react-native-paper";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { theme } from "./src/core/theme";
+import { LogBox } from "react-native";
 import {
   StartScreen,
   LoginScreen,
@@ -10,14 +11,13 @@ import {
   ForgotPasswordScreen,
   Dashboard,
   Attendance,
-  Reports
-} from './src/screens'
+  Reports,
+} from "./src/screens";
 
-
-const Stack = createStackNavigator()
-
+const Stack = createStackNavigator();
 
 const App = () => {
+  LogBox.ignoreAllLogs();
   return (
     <Provider theme={theme}>
       <NavigationContainer>
@@ -37,12 +37,10 @@ const App = () => {
             name="ForgotPasswordScreen"
             component={ForgotPasswordScreen}
           />
-          
-          
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
-  )
-}
+  );
+};
 
-export default App
+export default App;

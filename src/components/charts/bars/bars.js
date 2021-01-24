@@ -1,31 +1,46 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Dimensions,Text, View, SafeAreaView } from "react-native";
+import { Dimensions, Text, View } from "react-native";
 import ClassSelector from "./ClassSelector";
 import SectionSelector from "./SectionSelector";
 import styles from "./Attendance.styles";
-import {BarChart} from 'react-native-chart-kit';
+import { BarChart } from "react-native-chart-kit";
 import axios from "axios";
-import DatePicker from './DatePicker'
+import DatePicker from "./DatePicker";
+
 const MyBarChart = () => {
-  const [Status, setStatus] = React.useState([]);
+  const todaysdate = () => {
+    let today = new Date();
+    let d = today.getDate();
+    let m = today.getMonth() + 1;
+    let y = today.getFullYear();
+    if (d < 10) {
+      d = "0" + d;
+    }
+    if (m < 10) {
+      m = "0" + m;
+    }
+    return (today = y + "-" + m + "-" + d);
+  };
+  const API = Expo.Constants.manifest.extra.API_URL;
   const [FetchedSections, setFetchedSections] = useState([]);
   const [FetchedClasses, setFetchedClasses] = useState([]);
   const [EnableSelector, setEnableSelector] = useState(true);
   const [SelectedClass, setSelectedClass] = useState([]);
   const [SelectedSection, setSelectedSection] = useState([]);
-  const [sectionAttendance, setSectionAttendance] = useState([{name:'hello'}]);
   const [OneSectionAttendance, setOneSectionAttendance] = useState([]);
   const [BarPresent, setBarPresent] = useState(5);
   const [BarLate, setBarLate] = useState(3);
   const [BarAbsent, setBarAbsent] = useState(1);
-  
-  const [datee, setdatee] = useState("2021-01-14");
-  const setDate = (wrongdate) => {
-    let todate = wrongdate.split('-')
-    let day = parseInt(todate[2])+1
-    todate.splice(2, 1, day);
-  setdatee(todate.toString().replace(/,/g, '-'))
+  const [datee, setdatee] = useState(todaysdate());
 
+  const setDate = (wrongdate) => {
+    let todate = wrongdate.split("-");
+    let day = parseInt(todate[2]) + 1;
+    todate.splice(2, 1, day);
+    setdatee(todate.toString().replace(/,/g, "-"), testing(SelectedClass));
+    setBarPresent(0);
+    setBarLate(0);
+    setBarAbsent(0);
   };
 
   const HandleClass = (prop) => {
@@ -55,16 +70,14 @@ const MyBarChart = () => {
       ]);
     }
   };
-  
-  
 
   const HandleSection = (prop) => {
-    setSelectedSection(prop);
+    setSelectedSection(prop, setOneSectionAttendance(""));
   };
 
   useEffect(() => {
     axios
-      .get("http://192.168.0.109:8000/api/classesinfo")
+      .get(`${API}/api/classesinfo`)
       .then((res) => {
         setFetchedClasses(
           res.data.sections.map((item) => {
@@ -85,9 +98,11 @@ const MyBarChart = () => {
     if (SelectedSection.id !== "") {
       let id = SelectedSection.id;
       axios
-        .get(`http://192.168.0.109:8000/api/section/${id}`)
+        .get(`${API}/api/section/${id}`)
         .then((res) => {
-          setSectionAttendance(res.data.getattendance);
+          setOneSectionAttendance(
+            res.data.getattendance.filter((item) => item.date == datee)
+          );
           ////I still need to make a filter got Section attendance that filters only the dates needed
         })
         .catch((error) => {
@@ -95,93 +110,91 @@ const MyBarChart = () => {
         });
     }
   }, [SelectedSection]);
-  const filterAttendance = () => {
-    if (sectionAttendance !== undefined){
-      var dataa = sectionAttendance.filter(
-        (item) => item.date == datee
-      );
-      setOneSectionAttendance(dataa);
-    
-    }
-  }
+
+  // const filterAttendance = () => {
+  //   if (sectionAttendance !== undefined) {
+  //     var dataa = sectionAttendance.filter((item) => item.date == datee);
+  //     setOneSectionAttendance(dataa);
+  //   }
+  // };
+
   useEffect(() => {
     var barPresent = [];
     var barLate = [];
     var barAbsent = [];
- 
- filterAttendance()
-    console.log(OneSectionAttendance,'OneSectionAttendance')
+
+    // filterAttendance();
+
     if (OneSectionAttendance.length > 0) {
       OneSectionAttendance.forEach((item) => {
-        if (item.status === "present") {
+        if (item.status === "Present") {
           barPresent.push(item);
-        } else if (item.status === "late") {
+        } else if (item.status === "Late") {
           barLate.push(item);
-        } else if (item.status === "absent") {
+        } else if (item.status === "Absent") {
           barAbsent.push(item);
         }
       });
       setBarPresent(barPresent.length);
       setBarLate(barLate.length);
       setBarAbsent(barAbsent.length);
-     
     } else {
       setBarPresent(0);
       setBarLate(0);
       setBarAbsent(0);
     }
-  }, [ datee]);
-  console.log('great',datee)
-  console.log(BarPresent,'present')
+  }, [OneSectionAttendance]);
+  console.log(BarPresent, BarAbsent, BarLate);
+  return (
+    <View>
+      <View style={{ flex: 1 }}>
+        <DatePicker setDate={setDate} />
+      </View>
 
-  // console.log(Status);
-    return (
-      <View>
-        <View style={{flex:1}} >
-          <DatePicker setDate={setDate}/>
+      <View style={styles.selectors}>
+        <View>
+          <Text>Select Class</Text>
+          <ClassSelector
+            Objects={FetchedClasses}
+            enable={true}
+            HandleFunction={HandleClass}
+          />
         </View>
-       
-        <View style={styles.selectors}>
-          <View>
-            <Text>Select Class</Text>
-            <ClassSelector
-              Objects={FetchedClasses}
-              enable={true}
-              HandleFunction={HandleClass}
-            />
-          </View>
-          <View>
-            <Text>Select Section</Text>
-            <SectionSelector
-              Objects={FetchedSections}
-              enable={EnableSelector}
-              HandleFunction={HandleSection}
-            />
-          </View>
+        <View>
+          <Text>Select Section</Text>
+          <SectionSelector
+            Objects={FetchedSections}
+            enable={EnableSelector}
+            HandleFunction={HandleSection}
+          />
         </View>
-        
-        <View style={{flex:2, marginLeft:20}}>
+      </View>
+
+      <View style={{ flex: 2, marginLeft: 20 }}>
         <BarChart
           data={{
-            labels: ['Present' + BarPresent , 'Absent' + BarAbsent, 'Late' + BarLate ],
+            labels: [
+              "Present" + BarPresent,
+              "Absent" + BarAbsent,
+              "Late" + BarLate,
+            ],
             datasets: [
               {
                 data: [BarPresent, BarAbsent, BarLate],
               },
             ],
           }}
-          width={Dimensions.get('window').width-15}
+          width={Dimensions.get("window").width - 15}
           height={220}
-          yAxisLabel={''}
+          yAxisLabel={""}
           chartConfig={{
-            backgroundColor: '#1cc910',
-            backgroundGradientFrom: '#eff3ff',
-            backgroundGradientTo: '#efefef',
+            backgroundColor: "#1cc910",
+            backgroundGradientFrom: "#eff3ff",
+            backgroundGradientTo: "#efefef",
             decimalPlaces: 1,
             color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
             style: {
               borderRadius: 16,
-            
             },
           }}
           style={{
@@ -189,8 +202,8 @@ const MyBarChart = () => {
             borderRadius: 16,
           }}
         />
-        </View>
       </View>
-    );
-  };
-  export default MyBarChart 
+    </View>
+  );
+};
+export default MyBarChart;

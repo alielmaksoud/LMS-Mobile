@@ -1,78 +1,80 @@
-
 // import React in our code
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 // import all the components we are going to use
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 
 //import SearchableDropdown component
-import SearchableDropdown from 'react-native-searchable-dropdown';
+import SearchableDropdown from "react-native-searchable-dropdown";
 
-import axios from 'axios'
-
+import axios from "axios";
 
 export default function Search(props) {
-    const [Loading, setLoading] = useState(true);
-    const [Student, setStudent] = useState([]);
+  const API = Expo.Constants.manifest.extra.API_URL;
+  const [Loading, setLoading] = useState(true);
+  const [Student, setStudent] = useState([]);
 
-    useEffect(() => {
-        setLoading(true)
-        var config = {
-          method: 'get',
-          url: 'http://192.168.0.109:8000/api/student',
-          headers: { 
-            'Content-Type': 'application/x-www-form-urlencoded'
-          }};
-            axios(config)
-            .then(res => {
-                if (res.data !== undefined) {
-                    let items=[]
-                    res.data.forEach(
-                      (item) => items.push({id: item.id, name: item.first_name + ' ' + item.last_name})
-                    );
-                    setStudent(items)
-                    
-                    }
-            }).catch(err => {
-              console.log(err.request)
+  useEffect(() => {
+    setLoading(true);
+    var config = {
+      method: "get",
+      url: `${API}/api/student`,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    };
+    axios(config)
+      .then((res) => {
+        if (res.data !== undefined) {
+          let items = [];
+          res.data.forEach((item) =>
+            items.push({
+              id: item.id,
+              name: item.first_name + " " + item.last_name,
             })
-           setLoading(false)
-      },[]);
+          );
+          setStudent(items);
+        }
+      })
+      .catch((err) => {
+        console.log(err.request);
+      });
+    setLoading(false);
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.container}>
-       
         <SearchableDropdown
           onTextChange={(text) => console.log(text)}
           //On text change listner on the searchable input
-          onItemSelect={(item) => item ? props.setStudent(item.id) :null}
+          onItemSelect={(item) => (item ? props.setStudent(item.id) : null)}
           //onItemSelect called after the selection from the dropdown
-          containerStyle={{ padding: 0}}
+          containerStyle={{ padding: 0 }}
           //suggestion container style
           textInputStyle={{
             //inserted text style
             padding: 10,
             borderWidth: 1,
-            borderColor: '#ccc',
-            backgroundColor: '#FAF7F6',
+            borderColor: "#ccc",
+            backgroundColor: "#FAF7F6",
           }}
           itemStyle={{
             //single dropdown item style
             padding: 5,
             marginTop: 0,
-            backgroundColor: '#FAF9F8',
-            borderColor: '#bbb',
+            backgroundColor: "#FAF9F8",
+            borderColor: "#bbb",
             borderWidth: 1,
           }}
           itemTextStyle={{
             //text style of a single dropdown item
-            color: '#222',
+            color: "#222",
           }}
           itemsContainerStyle={{
             //items container style you can pass maxHeight
             //to restrict the items dropdown hieght
-            maxHeight: '60%',
+            maxHeight: "60%",
           }}
           items={Student}
           //mapping of item array
@@ -88,14 +90,11 @@ export default function Search(props) {
       </View>
     </SafeAreaView>
   );
-};
-
+}
 
 const styles = StyleSheet.create({
   container: {
-    flex:1,
+    flex: 1,
     padding: 4,
-    
   },
-  
 });
